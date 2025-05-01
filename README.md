@@ -1126,7 +1126,7 @@ const { width } = useWindowDimensions();
 
 ---
 
-# **5. Animated vs PanResponder vs LayoutAnimation
+# **6. Animated vs PanResponder vs LayoutAnimation**
 
 ### **1. Animated**
 #### **Purpose**  
@@ -1313,4 +1313,1133 @@ const styles = StyleSheet.create({
 - **"I need to animate a button press"** → `Animated`  
 - **"I want a draggable component"** → `PanResponder` + `Animated`  
 - **"I need to smoothly expand a view"** → `LayoutAnimation`  
+
+# **7. Container vs Smart Components in React Native**
+
+## **1. Definitions**
+### **Container (Smart) Components**
+- **Purpose**: Manage **state**, **data fetching**, and **business logic**.
+- **Also Called**: "Smart" components, controllers.
+- **Characteristics**:
+  - Know about Redux/MobX/store.
+  - Handle API calls.
+  - Pass data down to presentational components.
+  - Rarely have their own styles.
+
+### **Presentational (Dumb) Components**
+- **Purpose**: Focus solely on **how things look**.
+- **Characteristics**:
+  - Receive data and callbacks via props.
+  - Don't know about app state.
+  - Often reusable and style-heavy.
+  - No dependencies on app logic.
+
+---
+
+## **2. Key Differences**
+| Feature                | Container Components       | Presentational Components  |
+|------------------------|----------------------------|----------------------------|
+| **State Management**   | Own state/Redux connect    | Stateless (props only)     |
+| **Side Effects**       | API calls, subscriptions   | None                       |
+| **Reusability**        | Low (app-specific)         | High                       |
+| **Styling**            | Minimal                    | Extensive                  |
+| **Testing**            | Complex (logic heavy)      | Easy (visual only)         |
+
+---
+
+## **3. Code Examples**
+### **Container Component (Smart)**
+```javascript
+// UserContainer.js
+import React, { useEffect, useState } from 'react';
+import { fetchUser } from './api';
+import UserProfile from './UserProfile'; // Presentational component
+
+const UserContainer = ({ userId }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await fetchUser(userId);
+      setUser(data);
+      setLoading(false);
+    };
+    loadData();
+  }, [userId]);
+
+  if (loading) return <ActivityIndicator />;
+
+  return <UserProfile user={user} />;
+};
+
+export default UserContainer;
+```
+
+### **Presentational Component (Dumb)**
+```javascript
+// UserProfile.js
+import React from 'react';
+import { View, Text, Image, StyleSheet } from 'react-native';
+
+const UserProfile = ({ user }) => (
+  <View style={styles.container}>
+    <Image source={{ uri: user.avatar }} style={styles.avatar} />
+    <Text style={styles.name}>{user.name}</Text>
+    <Text>{user.bio}</Text>
+  </View>
+);
+
+const styles = StyleSheet.create({
+  container: { padding: 20 },
+  avatar: { width: 100, height: 100, borderRadius: 50 },
+  name: { fontSize: 20, fontWeight: 'bold' }
+});
+
+export default UserProfile;
+```
+
+---
+
+## **4. When to Use Each**
+### **Use Container Components When:**
+- You need to **fetch data**.
+- You **manage state** (local or global).
+- You **handle business logic**.
+- You **connect to Redux/MobX**.
+
+### **Use Presentational Components When:**
+- You're **displaying UI**.
+- You want **reusable components**.
+- You need **style isolation**.
+- You're **not handling logic**.
+
+---
+
+## **5. Evolution with Hooks**
+Modern React (with hooks) blurs these lines, but the **separation of concerns** remains valuable:
+
+```javascript
+// Modern hybrid component using hooks
+const UserProfile = ({ userId }) => {
+  // Logic (traditionally container responsibility)
+  const [user, setUser] = useState(null);
+  useEffect(() => { /* fetch user */ }, [userId]);
+
+  // Presentation (traditionally presentational responsibility)
+  if (!user) return <ActivityIndicator />;
+  
+  return (
+    <View style={styles.container}>
+      <Text>{user.name}</Text>
+    </View>
+  );
+};
+```
+
+---
+
+## **6. Best Practices**
+1. **Single Responsibility**: Keep containers and presentational components separate.
+2. **Prop Types**: Document props for presentational components.
+3. **Reusability**: Maximize presentational component reuse across projects.
+4. **Testing**:
+   - Test containers for **behavior**.
+   - Test presentational components for **rendering**.
+
+---
+
+## **7. Interview Questions**
+### **Q: Why separate containers and presentational components?**
+**A**:  
+- **Separation of concerns** (logic vs UI).  
+- **Easier testing** (isolated units).  
+- **Better reusability** (dumb components work anywhere).  
+
+### **Q: How do hooks change this pattern?**
+**A**:  
+Hooks allow mixing logic and presentation, but the **conceptual separation** (what vs how) remains important for maintainability.
+
+### **Q: Would you use Redux in a presentational component?**
+**A**:  
+**Never**. Presentational components should receive everything via props. Containers connect to Redux.
+
+---
+
+## **Summary**
+| **Pattern**          | **Classic Approach**       | **Modern Hooks Approach**       |
+|-----------------------|----------------------------|----------------------------------|
+| **Logic Location**    | Container components       | Custom hooks (e.g., `useUser`)   |
+| **UI Location**       | Presentational components  | Components using hooks           |
+| **Data Flow**         | Props drilling             | Context API + hooks              |
+
+While patterns evolve, the **core principle** remains:  
+**Separate what your app does from how it looks**.
+
+# **8. Design Patterns in React Native: A Practical Guide**
+
+Design patterns are reusable solutions to common problems in app development. Here are the most important patterns for React Native, with examples and use cases:
+
+---
+
+## **1. Component Patterns**
+### **A. Presentational & Container Components**
+- **Purpose**: Separate logic from UI
+- **Example**:
+  ```javascript
+  // Container (logic)
+  const UserContainer = () => {
+    const [user, setUser] = useState(null);
+    
+    useEffect(() => {
+      fetchUser().then(setUser);
+    }, []);
+
+    return <UserProfile user={user} />;
+  };
+
+  // Presentational (UI)
+  const UserProfile = ({ user }) => (
+    <View>
+      <Text>{user?.name}</Text>
+      <Image source={{ uri: user?.avatar }} />
+    </View>
+  );
+  ```
+
+### **B. Compound Components**
+- **Purpose**: Group related components that share state
+- **Example** (Tab Navigation):
+  ```javascript
+  <Tabs>
+    <Tabs.Tab title="Home" />
+    <Tabs.Tab title="Profile" />
+  </Tabs>
+  ```
+
+---
+
+## **2. State Management Patterns**
+### **A. Provider Pattern (Context API)**
+- **Purpose**: Global state without prop drilling
+- **Example**:
+  ```javascript
+  const ThemeContext = createContext();
+
+  const App = () => (
+    <ThemeContext.Provider value="dark">
+      <ChildComponent />
+    </ThemeContext.Provider>
+  );
+
+  const ChildComponent = () => {
+    const theme = useContext(ThemeContext);
+    return <Text>Current theme: {theme}</Text>;
+  };
+  ```
+
+### **B. Redux Pattern**
+- **Purpose**: Predictable state container
+- **Key Elements**:
+  - Actions → Reducers → Store
+- **React Native Example**:
+  ```javascript
+  // Slice
+  const userSlice = createSlice({
+    name: 'user',
+    initialState: { name: '' },
+    reducers: {
+      setName: (state, action) => {
+        state.name = action.payload;
+      }
+    }
+  });
+
+  // Component
+  const UserName = () => {
+    const name = useSelector(state => state.user.name);
+    const dispatch = useDispatch();
+    
+    return (
+      <TextInput 
+        value={name}
+        onChangeText={text => dispatch(setName(text))}
+      />
+    );
+  };
+  ```
+
+---
+
+## **3. Navigation Patterns**
+### **A. Router Pattern**
+- **Purpose**: Decouple navigation logic
+- **Example** (React Navigation):
+  ```javascript
+  const Stack = createStackNavigator();
+
+  const AppNavigator = () => (
+    <Stack.Navigator>
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
+    </Stack.Navigator>
+  );
+  ```
+
+### **B. Modal Gateway Pattern**
+- **Purpose**: Centralize modal management
+- **Implementation**:
+  ```javascript
+  const ModalContext = createContext();
+
+  const App = () => {
+    const [currentModal, setModal] = useState(null);
+
+    return (
+      <ModalContext.Provider value={{ setModal }}>
+        <MainContent />
+        {currentModal === 'login' && <LoginModal />}
+        {currentModal === 'logout' && <LogoutModal />}
+      </ModalContext.Provider>
+    );
+  };
+  ```
+
+---
+
+## **4. Performance Patterns**
+### **A. Memoization**
+- **Purpose**: Avoid unnecessary re-renders
+- **Tools**:
+  - `React.memo`
+  - `useMemo`
+  - `useCallback`
+- **Example**:
+  ```javascript
+  const ExpensiveComponent = React.memo(({ data }) => {
+    // Only re-renders when data changes
+    return <Text>{data}</Text>;
+  });
+  ```
+
+### **B. Virtualization**
+- **Purpose**: Optimize long lists
+- **Components**:
+  - `FlatList`
+  - `SectionList`
+- **Example**:
+  ```javascript
+  <FlatList
+    data={bigData}
+    renderItem={({ item }) => <ListItem item={item} />}
+    keyExtractor={item => item.id}
+    initialNumToRender={10}
+  />
+  ```
+
+---
+
+## **5. Architectural Patterns**
+### **A. Repository Pattern**
+- **Purpose**: Abstract data sources
+- **Example** (API Service):
+  ```javascript
+  class UserRepository {
+    async getUsers() {
+      return fetch('/api/users');
+    }
+    
+    async getUser(id) {
+      return fetch(`/api/users/${id}`);
+    }
+  }
+  ```
+
+### **B. Factory Pattern**
+- **Purpose**: Create objects dynamically
+- **React Native Use Case** (Component Factory):
+  ```javascript
+  const componentFactory = (type) => {
+    switch(type) {
+      case 'text': return TextComponent;
+      case 'image': return ImageComponent;
+      default: return DefaultComponent;
+    }
+  };
+
+  const DynamicComponent = componentFactory(props.type);
+  return <DynamicComponent {...props} />;
+  ```
+
+---
+
+## **6. Advanced Patterns**
+### **A. Higher-Order Components (HOCs)**
+- **Purpose**: Component logic reuse
+- **Example** (withLoading HOC):
+  ```javascript
+  const withLoading = (WrappedComponent) => {
+    return (props) => {
+      const [loading, setLoading] = useState(true);
+      
+      useEffect(() => {
+        setLoading(false);
+      }, []);
+
+      return loading ? <ActivityIndicator /> : <WrappedComponent {...props} />;
+    };
+  };
+
+  const EnhancedComponent = withLoading(MyComponent);
+  ```
+
+### **B. Render Props**
+- **Purpose**: Share code between components
+- **Example**:
+  ```javascript
+  const MouseTracker = ({ render }) => {
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    
+    const handleTouchMove = (event) => {
+      setPosition({
+        x: event.nativeEvent.pageX,
+        y: event.nativeEvent.pageY
+      });
+    };
+
+    return (
+      <View onTouchMove={handleTouchMove}>
+        {render(position)}
+      </View>
+    );
+  };
+
+  // Usage
+  <MouseTracker render={({ x, y }) => (
+    <Text>Position: {x}, {y}</Text>
+  )} />
+  ```
+
+---
+
+## **When to Use Which Pattern?**
+| **Problem**                          | **Pattern**                     |
+|--------------------------------------|---------------------------------|
+| Shared state across many components  | Provider Pattern                |
+| Complex state logic                  | Redux                           |
+| Optimizing list performance          | Virtualization                  |
+| Reusable component logic             | HOCs or Render Props            |
+| Dynamic component creation           | Factory Pattern                 |
+| Decoupled navigation                 | Router Pattern                  |
+
+---
+
+## **Key Takeaways**
+1. **Start Simple**: Begin with Presentational/Container separation
+2. **Scale Wisely**: Introduce Redux/Context when prop drilling becomes painful
+3. **Performance First**: Memoize and virtualize early
+4. **Patterns Are Tools**: Not every app needs every pattern
+
+These patterns will help you build **maintainable**, **scalable**, and **performant** React Native apps. Choose based on your app's specific needs! 🚀
+
+
+# **Component-Driven Development (CDD) in React Native: The Complete Guide**
+
+Component-Driven Development (CDD) is a methodology where UIs are built as **reusable, self-contained components** first, then composed into complex interfaces. Here's how it applies to React Native:
+
+---
+
+## **9. Core Principles of CDD in React Native**
+### **A. Atomic Design Hierarchy**
+Break components into scalable levels:
+
+1. **Atoms**: Smallest units (Buttons, Text inputs)  
+2. **Molecules**: Groups of atoms (Search bar = Input + Button)  
+3. **Organisms**: Complex components (Header, Product card)  
+4. **Templates**: Page layouts (App shell)  
+5. **Pages**: Final compositions with real data  
+
+### **B. Key Characteristics**
+- **Reusability**: Components work anywhere in the app  
+- **Isolation**: Develop/test independently  
+- **Composability**: Combine like Lego blocks  
+- **Documentation**: Storybook-style catalog  
+
+---
+
+## **2. Implementing CDD in React Native**
+### **A. Folder Structure**
+```
+/src
+  /components
+    /atoms
+      Button.js
+      TextInput.js
+    /molecules
+      SearchBar.js
+    /organisms
+      ProductCard.js
+    /templates
+      AppLayout.js
+  /screens
+    HomeScreen.js
+```
+
+### **B. Component Design Standards**
+#### **1. Props API Design**
+```javascript
+type ProductCardProps = {
+  title: string;
+  price: number;
+  imageUrl: string;
+  onPress?: () => void;
+  variant?: 'default' | 'compact';
+};
+```
+
+#### **2. Styling Approach**
+```javascript
+// Using StyleSheet with variants
+const styles = StyleSheet.create({
+  base: { borderRadius: 8 },
+  compact: { padding: 8 },
+  default: { padding: 16 }
+});
+
+const ProductCard = ({ variant = 'default', ...props }) => {
+  return (
+    <View style={[styles.base, styles[variant]]>
+      {/* Content */}
+    </View>
+  );
+};
+```
+
+#### **3. Composition Example**
+```javascript
+const SearchScreen = () => (
+  <AppLayout>
+    <SearchBar />
+    <FlatList
+      data={products}
+      renderItem={({ item }) => (
+        <ProductCard 
+          title={item.name}
+          price={item.price}
+          imageUrl={item.image}
+        />
+      )}
+    />
+  </AppLayout>
+);
+```
+
+---
+
+## **3. Tools for CDD in React Native**
+### **A. Storybook for React Native**
+Visual component catalog:
+```bash
+npx -p @storybook/cli sb init --type react_native
+```
+**Example Story**:
+```javascript
+// Button.stories.js
+export default {
+  title: 'Atoms/Button',
+  component: Button,
+};
+
+export const Primary = () => (
+  <Button onPress={() => {}}>Primary Button</Button>
+);
+
+export const Disabled = () => (
+  <Button disabled>Disabled Button</Button>
+);
+```
+
+### **B. Bit.dev**
+Cloud component hub:
+```bash
+bit init
+bit create react-component atoms/button
+```
+
+---
+
+## **4. Benefits for React Native Teams**
+1. **Faster Development**: Reuse components across projects  
+2. **Better Consistency**: Enforce design system rules  
+3. **Easier Testing**: Isolated component tests  
+4. **Parallel Work**: Multiple teams can work on different components  
+
+---
+
+## **5. CDD Workflow**
+1. **Design in Isolation**  
+   ```javascript
+   // Develop Button component standalone
+   const Button = ({ children }) => (
+     <TouchableOpacity style={styles.button}>
+       <Text>{children}</Text>
+     </TouchableOpacity>
+   );
+   ```
+
+2. **Document Variations**  
+   ![Storybook UI showing button states](https://storybook.js.org/static/example-button-states-6b6d73d43b68bc6a5d9c35b28dd2c318.png)
+
+3. **Integrate with App**  
+   ```javascript
+   // In your screen
+   import { Button } from '@your-ui-library/atoms';
+   ```
+
+4. **Iterate Based on Usage**  
+   - Collect feedback from usage  
+   - Update component API as needed  
+
+---
+
+## **6. Real-World Example: Airbnb's Design System**
+Airbnb's React Native components follow strict CDD principles:
+- **Base components**: Button, Input, Text  
+- **Composites**: DatePicker, LocationSearch  
+- **Screen templates**: ListingDetail, BookingFlow  
+
+```javascript
+// Example from their system
+<ListingCard
+  title={listing.name}
+  price={listing.price}
+  rating={listing.rating}
+  onPress={() => navigate('Detail')}
+/>
+```
+
+---
+
+## **7. Challenges & Solutions**
+| **Challenge**               | **Solution**                          |
+|-----------------------------|---------------------------------------|
+| Props bloat                 | Compound components                   |
+| Style conflicts             | Design tokens (centralized styles)    |
+| Native dependencies         | Platform-specific component variants  |
+| Testing interactions        | React Native Testing Library          |
+
+---
+
+## **8. Starter Template**
+```bash
+# Clone a CDD-ready React Native template
+npx react-native init MyApp --template @ui-library/cdd-template
+```
+
+**Key Files**:
+- `design-tokens.js` (Colors, spacing)  
+- `.storybook/` (Component stories)  
+- `component-linter.js` (Enforce CDD rules)  
+
+---
+
+## **9. Interview Ready: CDD Questions**
+### **Q: How do you ensure component reusability?**
+**A**:  
+"By following Atomic Design principles, strict prop APIs, and documenting all variants in Storybook. For example, our Button component works in any context because it handles icons, loading states, and theming through clearly defined props."
+
+### **Q: How does CDD improve team workflow?**
+**A**:  
+"Frontend and mobile teams share the same component library. Designers use Storybook as a single source of truth, reducing back-and-forth. We ship features faster because 60% of new screens just recompose existing components."
+
+### **Q: How do you handle platform differences?**
+**A**:  
+"We create platform-specific component variants (e.g., `Button.ios.js` and `Button.android.js`) that share a common API but implement native patterns appropriately."
+
+---
+
+## **Key Takeaways**
+1. **Start Small**: Build atoms first (Buttons, Inputs)  
+2. **Document Religiously**: Storybook is your UI contract  
+3. **Enforce Contracts**: Use TypeScript/prop-types  
+4. **Compose Fearlessly**: Combine like Lego blocks  
+
+CDD turns your React Native codebase into a **scalable, maintainable design system**. Teams at Airbnb, Uber, and Shopify swear by it! 🚀
+
+
+## **10. Flexbox in React Native**
+- **Purpose**: Primary layout system (similar to web but defaults to `flexDirection: 'column'`)
+- **Key Props**:
+  - `flex`: Size relative to siblings
+  - `flexDirection`: `row` | `column` (default)
+  - `justifyContent`: Align children along main axis
+  - `alignItems`: Align children along cross axis
+  - `alignSelf`: Override parent alignment
+- **Example**:
+  ```javascript
+  <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
+    <View style={{ width: 50, height: 50, backgroundColor: 'red' }} />
+  </View>
+  ```
+
+### **Other Layout Methods**
+1. **Absolute Positioning**:
+   ```javascript
+   position: 'absolute',
+   top: 10,
+   right: 20
+   ```
+2. **Dimensions API**:
+   ```javascript
+   const { width } = Dimensions.get('window');
+   ```
+3. **Percentage Values**:
+   ```javascript
+   width: '50%'
+   ```
+4. **Platform-Specific Layouts**:
+   ```javascript
+   padding: Platform.OS === 'ios' ? 10 : 5
+   ```
+
+### **Key Differences from Web**
+- No `display: grid` (use nested `View`s)
+- No `float` or `clear`
+- `flexShrink`/`flexGrow` behave slightly differently
+
+**Best Practice**: Use Flexbox for 90% of layouts, absolute positioning sparingly.
+
+### **11. Custom Hooks in React Native**  
+Custom Hooks are reusable JavaScript functions (prefix with `use`) that leverage React Hooks (like `useState`, `useEffect`) to encapsulate logic. They work identically in React Native as in React.
+
+---
+
+### **Key Features**  
+1. **Reusable Logic**: Share stateful logic across components.  
+2. **Clean Components**: Move complex logic out of components.  
+3. **Hook Rules**: Follow React’s Hook rules (only call at the top level).  
+
+---
+
+### **Basic Example: `useFetch` Hook**  
+```javascript
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+const useFetch = (url) => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(url);
+        setData(response.data);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [url]);
+
+  return { data, loading, error };
+};
+
+// Usage in Component
+const MyComponent = () => {
+  const { data, loading, error } = useFetch('https://api.example.com/data');
+  
+  if (loading) return <Text>Loading...</Text>;
+  if (error) return <Text>Error: {error.message}</Text>;
+  return <Text>{JSON.stringify(data)}</Text>;
+};
+```
+
+---
+
+### **Common Custom Hooks for React Native**  
+#### **1. `useDeviceOrientation`**  
+```javascript
+import { useState, useEffect } from 'react';
+import { Dimensions } from 'react-native';
+
+const useDeviceOrientation = () => {
+  const [orientation, setOrientation] = useState(
+    Dimensions.get('window').width > Dimensions.get('window').height ? 'LANDSCAPE' : 'PORTRAIT'
+  );
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setOrientation(window.width > window.height ? 'LANDSCAPE' : 'PORTRAIT');
+    });
+    return () => subscription?.remove();
+  }, []);
+
+  return orientation;
+};
+```
+
+#### **2. `useKeyboard` (Handle Keyboard Events)**  
+```javascript
+import { useState, useEffect } from 'react';
+import { Keyboard } from 'react-native';
+
+const useKeyboard = () => {
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener('keyboardDidShow', (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const hideSub = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardHeight(0);
+    });
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
+  return keyboardHeight;
+};
+```
+
+#### **3. `useDebounce` (Optimize Inputs)**  
+```javascript
+import { useState, useEffect } from 'react';
+
+const useDebounce = (value, delay = 500) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
+// Usage: Search input optimization
+const SearchComponent = () => {
+  const [query, setQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 300);
+
+  useEffect(() => {
+    if (debouncedQuery) {
+      // Trigger search API call
+    }
+  }, [debouncedQuery]);
+};
+```
+
+---
+
+### **Rules for Custom Hooks**  
+1. **Naming**: Always start with `use` (e.g., `useFetch`).  
+2. **Isolation**: Should be pure (no JSX).  
+3. **Composability**: Can call other Hooks.  
+
+---
+
+### **When to Use Custom Hooks?**  
+- **Shared Logic**: API calls, form handling, subscriptions.  
+- **Complex Effects**: Keyboard listeners, animations.  
+- **Performance**: Debouncing/throttling.  
+
+---
+
+### **Advantages**  
+✅ **Reusability** (Use across components)  
+✅ **Testability** (Logic is decoupled)  
+✅ **Cleaner Code** (Reduce component complexity)  
+
+Custom Hooks maximize code reuse while keeping components clean. They’re a **must-know** for modern React Native development. 🚀
+
+### **12. `useState` vs `useRef` in React Native**  
+
+| Feature               | `useState` | `useRef` |
+|----------------------|------------|----------|
+| **Purpose**          | Manage state that triggers re-renders | Store mutable values without re-renders |
+| **Re-renders**       | Yes (updates UI) | No (does not trigger re-render) |
+| **Mutable Value**    | Immutable (use setter) | Mutable (`.current` can be changed directly) |
+| **Use Cases**        | Dynamic UI updates, form inputs | Accessing DOM/native elements, timers, tracking previous values |
+| **Persistence**      | Resets on re-render unless preserved | Persists across re-renders |
+
+---
+
+### **When to Use `useState`?**  
+**For state that affects UI and requires re-renders:**  
+- Form inputs (`text`, `checkbox`)  
+- Toggles (`isLoading`, `isVisible`)  
+- Dynamic data from API responses  
+
+**Example:**  
+```javascript
+const [count, setCount] = useState(0); // Triggers re-render on change
+return <Text onPress={() => setCount(count + 1)}>{count}</Text>;
+```
+
+---
+
+### **When to Use `useRef`?**  
+**For values that should NOT trigger re-renders:**  
+- Accessing/manipulating DOM/native elements  
+- Storing timers/intervals  
+- Keeping track of previous state  
+- Storing mutable variables (like a counter in a loop)  
+
+**Example:**  
+```javascript
+const inputRef = useRef(null); // Does not trigger re-render
+const timerRef = useRef(null);
+
+useEffect(() => {
+  timerRef.current = setInterval(() => console.log("Running"), 1000);
+  return () => clearInterval(timerRef.current);
+}, []);
+
+return <TextInput ref={inputRef} />;
+```
+
+---
+
+### **Key Differences**  
+1. **Re-renders:**  
+   - `useState` → Updates UI.  
+   - `useRef` → No UI update (silent changes).  
+
+2. **Mutability:**  
+   - `useState` → Immutable (must use setter).  
+   - `useRef` → Directly mutate `.current`.  
+
+3. **Persistence:**  
+   - Both persist across re-renders, but `useRef` does not cause them.  
+
+---
+
+### **When to Choose Which?**  
+| Scenario | `useState` | `useRef` |
+|----------|------------|----------|
+| Need UI to update? | ✅ Yes | ❌ No |
+| Need to access a DOM element? | ❌ No | ✅ Yes |
+| Need to store a value that shouldn’t trigger re-renders? | ❌ No | ✅ Yes |
+| Need to track previous state? | ❌ (Use `useEffect` + `useRef`) | ✅ Yes |
+
+---
+
+### **Advanced Example: Combining Both**  
+```javascript
+const [count, setCount] = useState(0);
+const prevCountRef = useRef();
+
+useEffect(() => {
+  prevCountRef.current = count; // Track previous value without re-render
+}, [count]);
+
+return (
+  <View>
+    <Text>Now: {count}, Before: {prevCountRef.current}</Text>
+    <Button title="Increment" onPress={() => setCount(count + 1)} />
+  </View>
+);
+```
+
+---
+
+### **Summary**  
+- **`useState`** → For state that **should update the UI**.  
+- **`useRef`** → For **mutable values that shouldn’t re-render** (DOM refs, timers, etc.).  
+
+Use `useState` for dynamic UI, `useRef` for behind-the-scenes data. 🚀
+
+### **12. Checking Environment in React Native**  
+
+#### **1. Debug Mode**  
+```javascript
+const isDebug = __DEV__; // true in development, false in production
+```  
+
+#### **2. Environment Variables** (Using `react-native-config`)  
+```javascript
+import Config from 'react-native-config';  
+
+const env = Config.ENV; // 'dev', 'staging', 'prod'  
+```  
+
+#### **3. Detect Release Build**  
+```javascript
+const isRelease = !__DEV__;  
+```  
+
+#### **4. Platform-Specific Checks**  
+```javascript
+import { Platform } from 'react-native';  
+
+const isAndroid = Platform.OS === 'android';  
+const isIOS = Platform.OS === 'ios';  
+```  
+
+#### **5. Metro Bundler Dev Server**  
+```javascript
+const isMetroRunning = !!global.originalRequire; // true if connected to dev server  
+```  
+
+---
+
+### **When to Use?**  
+- **`__DEV__`** → Simple debug checks (logs, mock APIs).  
+- **`react-native-config`** → Multi-environment setups (API URLs).  
+- **`Platform`** → OS-specific behavior.  
+
+**Example:**  
+```javascript
+if (__DEV__) console.log("Debug mode!");  
+```  
+
+Use these to toggle features, APIs, or logs based on the environment. 🚀
+
+### **13. Controlled vs Uncontrolled Components in React Native**  
+
+#### **1. Controlled Components**  
+- **Definition**: Managed by React state.  
+- **Usage**: Forms, dynamic inputs.  
+- **Example**:  
+  ```javascript
+  const [text, setText] = useState('');
+  <TextInput
+    value={text}
+    onChangeText={setText} // State controls the input
+  />
+  ```  
+- **Pros**: Predictable, easy validation.  
+- **Cons**: More boilerplate.  
+
+#### **2. Uncontrolled Components**  
+- **Definition**: Managed by DOM/ref (React doesn’t control value).  
+- **Usage**: Simple forms, file inputs.  
+- **Example**:  
+  ```javascript
+  const inputRef = useRef(null);
+  <TextInput
+    ref={inputRef} // Access value via ref later
+    defaultValue="Initial" // Not state-controlled
+  />
+  // Get value: inputRef.current.value
+  ```  
+- **Pros**: Less code, better performance for large forms.  
+- **Cons**: Harder to validate/reset.  
+
+### **When to Use?**  
+- **Controlled**: Most cases (forms, dynamic UIs).  
+- **Uncontrolled**: File inputs, performance-critical forms.  
+
+**Rule of Thumb**: Prefer controlled for React Native. 🚀
+
+
+## **14. Secure Storage in React Native: Keychain (iOS) & Keystore (Android) Explained**  
+
+#### **1. Keychain (iOS)**
+- **What?**  
+  Apple’s encrypted system-level storage for sensitive data (passwords, tokens, certificates).  
+- **Why?**  
+  - Hardware-backed encryption (secure even if device is compromised).  
+  - Auto-locks when device is locked.  
+  - Supports biometric (FaceID/TouchID) protection.  
+
+#### **2. Keystore (Android)**  
+- **What?**  
+  Android’s secure container for cryptographic keys and sensitive data.  
+- **Why?**  
+  - Uses hardware security modules (HSM) on supported devices.  
+  - Prevents extraction even with root access.  
+
+---
+
+### **How to Use Them?**  
+#### **Step 1: Install `react-native-keychain`**  
+```bash
+npm install react-native-keychain
+npx pod-install  # For iOS
+```
+
+#### **Step 2: Save Data Securely**  
+```javascript
+import * as Keychain from 'react-native-keychain';
+
+// Save (automatically uses Keychain/Keystore based on OS)
+await Keychain.setGenericPassword('username', 'secret_token', {
+  service: 'com.your.app',  // Unique identifier
+  accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,  // Optional biometric lock
+});
+```
+
+#### **Step 3: Retrieve Data**  
+```javascript
+const credentials = await Keychain.getGenericPassword({
+  service: 'com.your.app',
+});
+console.log(credentials.password);  // 'secret_token'
+```
+
+#### **Step 4: Delete Data**  
+```javascript
+await Keychain.resetGenericPassword({
+  service: 'com.your.app',
+});
+```
+
+---
+
+### **Key Features**  
+| Feature                | Keychain (iOS)           | Keystore (Android)       |  
+|------------------------|--------------------------|--------------------------|  
+| **Encryption**         | Hardware-backed          | Hardware-backed (if available) |  
+| **Biometric Lock**     | Yes (FaceID/TouchID)     | Yes (Fingerprint)        |  
+| **Data Persistence**   | Survives app uninstall   | Survives app uninstall   |  
+| **Access Control**     | Configurable (e.g., `BIOMETRY_CURRENT_SET`) | Configurable (e.g., `USER_PRESENCE`) |  
+
+---
+
+### **When to Use?**  
+- **✅ Auth tokens**  
+- **✅ API keys**  
+- **✅ User credentials**  
+- **❌ Large data** (use encrypted files instead)  
+
+---
+
+### **Example: Secure Token Storage**  
+```javascript
+// Save after login
+await Keychain.setGenericPassword('user', 'jwt_token', {
+  service: 'com.myapp.auth',
+  accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
+});
+
+// Retrieve for API calls
+const { password } = await Keychain.getGenericPassword({ service: 'com.myapp.auth' });
+fetch('/api/user', {
+  headers: { Authorization: `Bearer ${password}` },
+});
+```
+
+---
+
+### **Best Practices**  
+1. **Always use a unique `service` ID** (e.g., `com.your.appname`).  
+2. **Enable biometrics** for critical operations.  
+3. **Fallback**: If Keychain fails, force re-authentication.  
+
+This is the **most secure** way to handle sensitive data in React Native. 🔐  
+
+For advanced use cases (e.g., RSA keys), explore:  
+- [`react-native-sensitive-info`](https://github.com/mCodex/react-native-sensitive-info) (Android Keystore + iOS Keychain)  
+- Android’s `EncryptedSharedPreferences` for non-token data.
+
 
