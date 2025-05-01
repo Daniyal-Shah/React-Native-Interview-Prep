@@ -278,12 +278,216 @@ function greet(user: User): string {
 ### **Q: What are promises?**
 **A**: Promises represent the eventual completion (or failure) of an async operation. They can be in **pending**, **fulfilled**, or **rejected** states.
 
+
+# **call(), apply(), and bind() in JavaScript - Complete Guide**
+
+These three methods are crucial for **controlling `this` context** and **function invocation** in JavaScript. Here's a deep dive with React Native-relevant examples:
+
 ---
 
-## **Final Tips**
-1. **Master closures** and `this` binding.
-2. **Practice array methods** (`map`, `filter`, `reduce`).
-3. **Understand async/await** and promises.
-4. **Learn TypeScript** for modern React Native roles.
+## **1. The `this` Problem in JavaScript**
+Before we look at solutions, let's understand the core issue:
 
-This guide covers **everything you need** for JavaScript/TypeScript questions in React Native interviews! 🚀
+```javascript
+const user = {
+  name: "Alice",
+  greet() {
+    console.log(`Hello, ${this.name}!`);
+  }
+};
+
+const greetFunc = user.greet;
+greetFunc(); // Error: Cannot read property 'name' of undefined
+```
+
+**Why?**  
+When `greetFunc` is called standalone, `this` loses its context (points to `undefined` in strict mode).
+
+---
+
+## **2. call()**
+### **Definition**
+Immediately invokes a function with a specified `this` value and individual arguments.
+
+### **Syntax**
+```javascript
+func.call(thisArg, arg1, arg2, ...)
+```
+
+### **Example**
+```javascript
+function showDetails(age, city) {
+  console.log(`${this.name}, ${age}, ${city}`);
+}
+
+const person = { name: "Bob" };
+
+showDetails.call(person, 30, "New York"); 
+// Output: "Bob, 30, New York"
+```
+
+### **React Native Use Case**
+```javascript
+// Mocking a native module method
+const mockNativeModule = {
+  showAlert: function(message) {
+    console.log(`Alert: ${message}`);
+  }
+};
+
+function displayAlert(message) {
+  this.showAlert(message);
+}
+
+displayAlert.call(mockNativeModule, "Hello!"); 
+// Output: "Alert: Hello!"
+```
+
+---
+
+## **3. apply()**
+### **Definition**
+Similar to `call()`, but accepts arguments as an **array**.
+
+### **Syntax**
+```javascript
+func.apply(thisArg, [argsArray])
+```
+
+### **Example**
+```javascript
+function showDetails(age, city) {
+  console.log(`${this.name}, ${age}, ${city}`);
+}
+
+const person = { name: "Charlie" };
+
+showDetails.apply(person, [25, "London"]); 
+// Output: "Charlie, 25, London"
+```
+
+### **React Native Use Case**
+```javascript
+// Merging arrays in a Redux reducer
+const array1 = [1, 2];
+const array2 = [3, 4];
+
+array1.push.apply(array1, array2);
+console.log(array1); // [1, 2, 3, 4]
+```
+
+---
+
+## **4. bind()**
+### **Definition**
+Creates a **new function** with a bound `this` value, without immediate invocation.
+
+### **Syntax**
+```javascript
+const boundFunc = func.bind(thisArg, arg1, arg2, ...)
+```
+
+### **Example**
+```javascript
+const user = {
+  name: "Dave",
+  greet: function() {
+    console.log(`Hello, ${this.name}!`);
+  }
+};
+
+const boundGreet = user.greet.bind(user);
+boundGreet(); // "Hello, Dave!"
+```
+
+### **React Native Use Case**
+```javascript
+// Binding event handlers in class components
+class Button extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handlePress = this.handlePress.bind(this);
+  }
+
+  handlePress() {
+    console.log("Pressed by:", this.props.user);
+  }
+
+  render() {
+    return <Button onPress={this.handlePress} />;
+  }
+}
+```
+
+---
+
+## **Key Differences**
+| Method     | Invocation Time | Arguments       | Returns                  | Use Case                          |
+|------------|-----------------|-----------------|--------------------------|-----------------------------------|
+| `call()`   | Immediately     | Individual args | Function result          | When you know arguments upfront   |
+| `apply()`  | Immediately     | Array of args   | Function result          | When args are in an array         |
+| `bind()`   | Later           | Individual args | Bound function           | For event handlers, callbacks     |
+
+---
+
+## **Advanced Patterns**
+### **1. Borrowing Methods**
+```javascript
+// Array-like object borrowing Array methods
+const arrayLike = { 0: "a", 1: "b", length: 2 };
+const realArray = Array.prototype.slice.call(arrayLike);
+console.log(realArray); // ["a", "b"]
+```
+
+### **2. Partial Application with `bind()`**
+```javascript
+function multiply(a, b) {
+  return a * b;
+}
+
+const double = multiply.bind(null, 2);
+console.log(double(5)); // 10
+```
+
+### **3. React Native Event Handling (Modern Approach)**
+```javascript
+// With arrow functions (no need for bind)
+class Button extends React.Component {
+  handlePress = () => {
+    console.log("Pressed by:", this.props.user);
+  };
+
+  render() {
+    return <Button onPress={this.handlePress} />;
+  }
+}
+```
+
+---
+
+## **Interview Questions & Answers**
+### **Q: When would you use `bind()` vs arrow functions in React?**
+**A**:  
+- **`bind()`**: Needed in class components for methods (pre-React 16).  
+- **Arrow functions**: Automatically bind `this` (modern approach).  
+
+### **Q: How is `apply()` different from `call()`?**
+**A**:  
+`apply()` takes arguments as an **array**, while `call()` takes them **individually**.  
+
+### **Q: Can you change `this` context after `bind()`?**
+**A**:  
+No, `bind()` creates a **permanently bound** function.  
+
+---
+
+## **Summary**
+1. **`call()`/`apply()`**: Immediately invoke with new `this`.  
+2. **`bind()`**: Create a reusable bound function.  
+3. **React Native Usage**:  
+   - Event handling (class components)  
+   - Method borrowing (e.g., array methods)  
+   - Partial function application  
+
+Master these to **control `this` like a pro** in your React Native interviews! 🚀
+
