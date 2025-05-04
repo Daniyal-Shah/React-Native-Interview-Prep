@@ -2443,3 +2443,177 @@ For advanced use cases (e.g., RSA keys), explore:
 - Android’s `EncryptedSharedPreferences` for non-token data.
 
 
+### **15. Functional Programming in JavaScript**  
+Functional Programming (FP) is a programming paradigm where:  
+- **Functions are first-class citizens** (can be assigned to variables, passed as arguments, returned from other functions).  
+- **Pure functions** (no side effects, same input → same output) are preferred.  
+- **Immutability** (data is never modified, but copied/transformed).  
+- **Avoid shared state and mutable data**.  
+
+---
+
+## **Core Concepts with Examples**  
+
+### **1. Pure Functions**  
+A function that:  
+- **Always returns the same output** for the same input.  
+- **No side effects** (doesn’t modify external state).  
+
+✅ **Pure:**  
+```javascript
+const add = (a, b) => a + b;  
+console.log(add(2, 3)); // Always 5  
+```
+
+❌ **Impure:**  
+```javascript
+let tax = 0.1;  
+const calculateTotal = (price) => price + (price * tax); // Depends on external `tax`  
+```
+
+---
+
+### **2. Immutability**  
+Instead of modifying data, **create new copies**.  
+
+✅ **Immutable (Good):**  
+```javascript
+const numbers = [1, 2, 3];  
+const newNumbers = [...numbers, 4]; // Doesn’t modify `numbers`  
+```
+
+❌ **Mutable (Bad):**  
+```javascript
+numbers.push(4); // Modifies original array  
+```
+
+---
+
+### **3. Higher-Order Functions (HOFs)**  
+Functions that:  
+- **Take functions as arguments**, or  
+- **Return functions**.  
+
+**Example:**  
+```javascript
+// HOF: Takes a function as argument
+const applyOperation = (a, b, operation) => operation(a, b);  
+
+const add = (x, y) => x + y;  
+console.log(applyOperation(2, 3, add)); // 5  
+```
+
+**Built-in HOFs in JavaScript:**  
+```javascript
+// Array methods
+[1, 2, 3].map(x => x * 2); // [2, 4, 6]  
+[1, 2, 3].filter(x => x > 1); // [2, 3]  
+[1, 2, 3].reduce((acc, x) => acc + x, 0); // 6  
+```
+
+---
+
+### **4. Function Composition**  
+Combining small functions into larger ones.  
+
+**Example:**  
+```javascript
+const double = x => x * 2;  
+const square = x => x * x;  
+
+// Compose: square(double(x))
+const doubleThenSquare = x => square(double(x));  
+console.log(doubleThenSquare(3)); // 36  
+```
+
+**Using `compose` (Lodash/Ramda style):**  
+```javascript
+const compose = (f, g) => x => f(g(x));  
+const doubleThenSquare = compose(square, double);  
+console.log(doubleThenSquare(3)); // 36  
+```
+
+---
+
+### **5. Avoiding Side Effects**  
+Side effects = Changes outside the function (e.g., modifying globals, DOM, API calls).  
+
+✅ **No Side Effects:**  
+```javascript
+const greet = (name) => `Hello, ${name}!`;  
+```
+
+❌ **Side Effects:**  
+```javascript
+let greeting = "";  
+const setGreeting = (name) => {  
+  greeting = `Hello, ${name}!`; // Modifies external state  
+};  
+```
+
+---
+
+### **6. Currying**  
+Transforming a function with multiple arguments into a sequence of single-argument functions.  
+
+**Example:**  
+```javascript
+// Normal function
+const add = (a, b) => a + b;  
+
+// Curried version
+const curriedAdd = a => b => a + b;  
+const add5 = curriedAdd(5);  
+console.log(add5(3)); // 8  
+```
+
+**Practical Use (e.g., React event handlers):**  
+```javascript
+const handleChange = field => event => {  
+  setFormData({ ...formData, [field]: event.target.value });  
+};  
+
+<input onChange={handleChange("email")} />  
+```
+
+---
+
+## **Why Use Functional Programming?**  
+✔ **Easier debugging** (pure functions = predictable)  
+✔ **Better readability** (small, reusable functions)  
+✔ **Concurrency-friendly** (no shared state = fewer race conditions)  
+✔ **Testable** (no hidden dependencies)  
+
+---
+
+## **FP Libraries for JavaScript**  
+- **Lodash/FP** (functional helpers)  
+- **Ramda** (curried, composable utilities)  
+- **Immer** (immutable updates)  
+
+---
+
+### **Final Example: FP-Style Data Processing**  
+```javascript
+const users = [
+  { id: 1, name: "Alice", age: 25 },
+  { id: 2, name: "Bob", age: 30 },
+];
+
+// Get names of users over 28
+const result = users
+  .filter(user => user.age > 28)
+  .map(user => user.name);
+
+console.log(result); // ["Bob"]  
+```
+
+---
+
+### **Key Takeaways**  
+🔹 **Use pure functions** (avoid side effects).  
+🔹 **Prefer immutability** (don’t modify, create new data).  
+🔹 **Leverage HOFs** (`map`, `filter`, `reduce`).  
+🔹 **Compose functions** for complex logic.  
+
+Would you like a deeper dive into any specific FP concept? 🚀
