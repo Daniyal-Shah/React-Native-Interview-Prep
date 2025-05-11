@@ -121,3 +121,65 @@ Keeping current in the fast-evolving React Native ecosystem requires a systemati
 
 **Q20: How do you measure your team's success?**
 I assess team success through a balanced set of technical, product, and cultural metrics. On the technical side, I track quality indicators like production incident rates, test coverage trends, and build stability. For product impact, I measure how our work moves key business metrics - feature adoption rates, performance improvements, and user satisfaction scores from app store reviews and surveys. Equally important are team health metrics: retention rates, engagement survey results, and career growth (promotions, new skills learned). I also evaluate our effectiveness through process metrics like lead time for changes and deployment frequency. However, I'm careful not to over-optimize for any single metric - the goal is to look at trends across all these areas to get a holistic view. Regular retrospectives where the team assesses their own success against these dimensions ensure we're not just delivering outputs but creating meaningful outcomes. This multifaceted approach helps me recognize and celebrate successes while identifying areas for improvement.
+
+# **3. Business Impact (Fintech Knowledge, Prioritization)**  
+
+**Q1. How do you prioritize features in a fintech app?**
+I prioritize based on regulatory requirements first, then revenue impact, followed by user experience improvements, using a weighted scoring system to objectively rank features.
+
+**Q2. How would you improve MoneyLion's app?**
+I'd enhance onboarding speed through bank data pre-fill, add personalized financial insights using AI, and implement robust offline transaction caching.
+
+**Q3. How do you balance speed vs. stability in fintech?**
+I implement automated testing for core flows, use feature flags for gradual rollouts, and maintain a kill switch for critical functionality.
+
+**Q4. How do you handle a compliance requirement that slows development?**
+I break compliance work into modular components, negotiate phased deadlines with regulators, and educate teams on the risks of non-compliance.
+
+**Q5. How do you measure the success of a feature?**
+I track business metrics (conversions), user engagement (DAU), and qualitative feedback (NPS), comparing against pre-launch benchmarks.
+
+**Q6. How do you justify tech debt reduction to executives?**
+I quantify debt costs in support tickets and lost productivity, then show ROI projections from proposed fixes.
+
+**Q7. How do you handle a feature request that conflicts with technical feasibility?**
+I explain constraints clearly, propose alternative solutions, and focus discussions on the underlying user need rather than implementation.
+
+**Q8. How do you ensure your app meets fintech security standards?**
+I implement regular pentests, enforce OWASP guidelines, maintain SOC 2 compliance, and use automated security scanning in CI/CD.
+
+**Q9. How do you handle a data breach scenario?**
+I follow our incident response plan: contain the breach, notify affected parties per regulations, investigate root causes, and implement preventive measures.
+
+**Q10. How do you decide to build vs. buy a solution?**
+I build for competitive differentiators and buy for generic needs, evaluating maintenance costs, time-to-market, and compliance requirements.
+
+**Q11. How do you align mobile strategy with business goals?**
+I map each mobile initiative to specific KPIs like customer acquisition cost or retention rates, ensuring technical work drives measurable business outcomes.
+
+**Q12. How do you handle a regulatory change (e.g., GDPR)?**
+I assemble a cross-functional team to assess impact, implement required changes in phases, and document compliance for audits.
+
+**Q13. How do you reduce customer support tickets for your app?**
+I analyze ticket trends to identify root causes, implement in-app self-help solutions, and proactively fix recurring UX pain points.
+
+**Q14. How do you handle pushback from business teams on tech priorities?**
+I present data showing how technical investments enable their goals, and negotiate tradeoffs that balance immediate needs with long-term stability.
+
+**Q15. How do you ensure your app is accessible?**
+I follow WCAG guidelines, conduct VoiceOver/TalkBack testing, and include users with disabilities in our testing groups.
+
+**Q16. How do you handle a failed product launch?**
+I conduct a blameless post-mortem to identify root causes, communicate learnings transparently, and pivot based on user feedback.
+
+**Q17. How do you evaluate third-party SDKs for fintech?**
+I assess security certifications, performance impact, vendor stability, and compliance with our data handling policies before integration.
+
+**Q18. How do you handle customer data privacy requests?**
+I automate data access/deletion workflows to comply with regulations, while maintaining audit trails of all privacy-related actions.
+
+**Q19. How do you reduce payment processing failures?**
+I implement fallback processors, pre-validate payment details, and use exponential backoff for retries during network issues.
+
+**Q20. How do you justify mobile engineering headcount to executives?**
+I quantify opportunity costs from delayed features, compare to competitor team sizes, and highlight risks of being understaffed during incidents.
