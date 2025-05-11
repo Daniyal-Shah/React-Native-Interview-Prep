@@ -183,3 +183,66 @@ I implement fallback processors, pre-validate payment details, and use exponenti
 
 **Q20. How do you justify mobile engineering headcount to executives?**
 I quantify opportunity costs from delayed features, compare to competitor team sizes, and highlight risks of being understaffed during incidents.
+
+# **4. Culture Fit (Collaboration, Adaptability)** 
+
+**Q1: Describe a time you worked with a difficult teammate.**  
+When a designer pushed for complex animations that hurt performance, I demonstrated metrics showing the impact and proposed a simplified version that achieved the vision without compromising UX.
+
+**Q2: How do you handle feedback from junior engineers?**  
+I actively listen to their input, validate good suggestions, and clearly explain any decisions that go against their ideas to foster growth and engagement.
+
+**Q3: How do you adapt to changing priorities?**  
+When my company shifted focus to profitability, I quickly reprioritized our roadmap to address tech debt that was driving up cloud costs, resulting in 30% savings.
+
+**Q4: Describe your ideal engineering culture.**  
+I believe in creating an environment where teams feel safe to take risks, take ownership of their work, and maintain sustainable pace without excessive crunch time.
+
+**Q5: How do you handle a manager you disagree with?**  
+I present data supporting my perspective, but ultimately respect the decision-making process and fully commit to the chosen direction once a decision is made.
+
+**Q6: How do you contribute to a positive team environment?**  
+I recognize achievements publicly, help onboard new members through mentorship, and facilitate knowledge sharing through regular tech talks.
+
+**Q7: How do you handle burnout in yourself or your team?**  
+I promote work-life balance by encouraging time off, rotating on-call duties fairly, and monitoring workloads to prevent overload.
+
+**Q8: How do you handle a missed deadline due to external factors?**  
+I communicate transparently about the delay, implement contingency plans to deliver partial value, and conduct retrospectives to improve future planning.
+
+**Q9: How do you stay productive in a remote team?**  
+I optimize for asynchronous communication, protect focused work time, and maintain regular touchpoints to ensure alignment.
+
+**Q10: How do you handle a conflict between engineers?**  
+I facilitate private discussions focused on solutions, keep conversations objective by focusing on user impact, and involve HR only when necessary.
+
+**Q11: Describe a time you went above and beyond for your team.**  
+When a teammate fell ill before launch, I took on their responsibilities to meet our deadline, then ensured they had time to recover afterward.
+
+**Q12: How do you handle ambiguity in a project?**  
+I seek clarity on success metrics, build quick prototypes to test assumptions, and document all decisions to reduce uncertainty.
+
+**Q13: How do you build rapport with non-technical stakeholders?**  
+I communicate in business terms they understand, use visual demonstrations instead of technical specs, and align my priorities with their goals.
+
+**Q14: How do you handle a project where requirements keep changing?**  
+I politely question the reasons for changes, deliver work incrementally to adapt more easily, and update timelines transparently.
+
+**Q15: How do you handle a culture clash when joining a new company?**  
+I take time to understand existing norms before suggesting changes, asking questions to learn the rationale behind current practices.
+
+**Q16: How do you handle a teammate who takes credit for your work?**  
+I address it directly but professionally in private, maintain documentation of my contributions, and escalate only if the behavior persists.
+
+**Q17: How do you deal with imposter syndrome?**  
+I maintain a record of my accomplishments, reinforce my knowledge by mentoring others, and normalize discussions about self-doubt.
+
+**Q18: How do you handle a disagreement about coding standards?**  
+I reference established guidelines when available, compare solutions objectively, and defer to the code owner when appropriate.
+
+**Q19: How do you encourage diversity in your team?**  
+I implement blind hiring practices, actively recruit from underrepresented groups, and structure interviews to reduce bias.
+
+**Q20: Why do you want to work at MoneyLion?**  
+I'm passionate about financial inclusion, excited by the technical challenges of scaling fintech products, and eager to grow my leadership skills in this environment.
+
